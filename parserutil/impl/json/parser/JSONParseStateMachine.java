@@ -177,14 +177,14 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
             return "";
           }
           //Not the end of object and not a string.  Object fields must start with a string identifier.
-          if(tokenDescriptor.getDesignation() != JSONTokenDesignation.ID_STR) return ResourceBundle.getBundle("json.parser").getString("objfldnostr");
+          if(tokenDescriptor.getDesignation() != JSONTokenDesignation.ID_STR) return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objfldnostr");
           //Still here - we now need the field assignment character ':'.
           state = STATE.FIELD_ASG;
           //Success.
           return "";
         case FIELD_ASG:
           //Separator needed.  After this we need to get a value.
-          if(tokenDescriptor.getDesignation() != JSONTokenDesignation.OP_FLDASG) return ResourceBundle.getBundle("json.parser").getString("objfldnosep");
+          if(tokenDescriptor.getDesignation() != JSONTokenDesignation.OP_FLDASG) return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objfldnosep");
           //Success.  Got the field name and separator, now get the field value.
           state = STATE.FIELD_DES;
           return "";
@@ -208,7 +208,7 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
             return "";
           }
           //None of the required tokens found.
-          return ResourceBundle.getBundle("json.parser").getString("objnoval");          
+          return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objnoval");          
         case FIELD_SEP:
           //We're looking for separator or end.
           if(tokenDescriptor.getDesignation() == JSONTokenDesignation.OP_SEP)
@@ -225,14 +225,14 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
           }
           else
           {
-            return ResourceBundle.getBundle("json.parser").getString("objfol");
+            return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objfol");
           }
         default:
           break;
       }
       
       //Default - illegal state. 
-      return ResourceBundle.getBundle("json.parser").getString("badstate");
+      return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("badstate");
     }
   }
   
@@ -278,7 +278,7 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
             return "";
           }
           //None of the required tokens found.   
-          return ResourceBundle.getBundle("json.parser").getString("arrnoval");          
+          return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("arrnoval");          
         case FIELD_SEP:
           //We're looking for separator or end.
           if(desc.getDesignation() == JSONTokenDesignation.OP_SEP)
@@ -295,14 +295,14 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
           }
           else
           {
-            return ResourceBundle.getBundle("json.parser").getString("arrfol");
+            return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("arrfol");
           }
         default:
           break;
       }
 
       //Default - illegal state. 
-      return ResourceBundle.getBundle("json.parser").getString("badstate");
+      return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("badstate");
     }
     
   }
@@ -319,7 +319,7 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
     public String check(JSONTokenDescriptor t)
     {
       //No tokens following the string are permitted.  
-      return ResourceBundle.getBundle("json.parser").getString("valfol");
+      return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("valfol");
     }
     
   }
