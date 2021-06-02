@@ -85,17 +85,37 @@ public class JSONDocumentParser extends JSONAbstractParser
         // Check type. Top level type can be an object, array or a string.
         if (nextToken.descriptor.getDesignation() == JSONTokenDesignation.OP_START_OBJ)
         {
-          return doJSONParseObject(content);
+          //Parse the return object.
+          JSONValueHolder jsonRetObject = doJSONParseObject(content);
+          
+          //Test for follow-on token.  If there are further tokens (not allowed) then this will fail.
+          getNextJSONToken(content);
+          
+          //Return the object.
+          return jsonRetObject;
         }
         else if (nextToken.descriptor.getDesignation() == JSONTokenDesignation.OP_START_ARR)
         {
-          return doJSONParseArray(content);
+          //Parse the return object.
+          JSONValueHolder jsonRetObject = doJSONParseArray(content);
+          
+          //Test for follow-on token.  If there are further tokens (not allowed) then this will fail.
+          getNextJSONToken(content);
+          
+          //Return the object.
+          return jsonRetObject;
         }
         //Test for a simple value
         else if (nextToken.descriptor.getType() == JSONTokenType.IDENTIFIER)
         {
-          // Return simple value.
-          return new JSONValueHolder(new JSONValueImpl(nextToken));
+          //Parse the return object.
+          JSONValueHolder jsonRetObject = new JSONValueHolder(new JSONValueImpl(nextToken));
+          
+          //Test for follow-on token.  If there are further tokens (not allowed) then this will fail.
+          getNextJSONToken(content);
+          
+          //Return the object.
+          return jsonRetObject;
         }
         else
         {
