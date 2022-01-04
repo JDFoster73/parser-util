@@ -97,4 +97,14 @@ public class JSONTokenDescriptorCommentImpl implements JSONTokenDescriptor
   {
     return getType().name();
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void init()
+  {
+    //Reset the finished flag.
+    finished = false;
+  }
 }

@@ -110,4 +110,14 @@ public class JSONTokenDescriptorNullImpl implements JSONTokenDescriptor
   {
     return getType().name();
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void init()
+  {
+    //Set the stage to 0.
+    stage = 0;
+  }    
 }

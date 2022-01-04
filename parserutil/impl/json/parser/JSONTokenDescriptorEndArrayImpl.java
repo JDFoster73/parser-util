@@ -83,4 +83,13 @@ public class JSONTokenDescriptorEndArrayImpl implements JSONTokenDescriptor
   {
     return getType().name();
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void init()
+  {
+    //No state in this token descriptor.    
+  }  
 }

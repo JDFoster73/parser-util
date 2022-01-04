@@ -114,4 +114,14 @@ public class JSONTokenDescriptorBoolImpl implements JSONTokenDescriptor
   {
     return getType().name();
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void init()
+  {
+    //
+    stage = 0;
+  }
 }

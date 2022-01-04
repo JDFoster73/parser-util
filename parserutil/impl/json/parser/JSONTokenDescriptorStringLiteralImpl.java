@@ -108,4 +108,16 @@ public class JSONTokenDescriptorStringLiteralImpl implements JSONTokenDescriptor
   {
     return getType().name();
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void init()
+  {
+    //Set escape and finished flags to initial state.
+    escape = false;
+    finished = false;
+  }  
+ 
 }

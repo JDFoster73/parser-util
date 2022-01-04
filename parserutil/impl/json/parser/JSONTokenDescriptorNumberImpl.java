@@ -30,7 +30,7 @@
 package parserutil.impl.json.parser;
 
 /**
- * <p>Implementation of a token descriptor that identifies a JSON number identifier.
+ * <p>Implementation of a token descriptor that identifies a JSON number identifier, num[.frac]['e'|'E'['-'|'+']num]
  * 
  * @author James David Foster jdfoster73@gmail.com
  *
@@ -39,11 +39,16 @@ public class JSONTokenDescriptorNumberImpl implements JSONTokenDescriptor
 {
   /**
    * <p>Stage - <br>
-   * 0 = start
-   * 
+   * 0 = start digit: '-' or number.
+   * 1 = '.' separator in the case of the mantissa being a floating-point number.
+   * 2 = 'e' or 'E' in the case that there is an exponent.  Check for '-', '+' or digit.
+   * 3 = exponent digit(s).
    */
   private int stage = 0;
   
+  /**
+   * <p>Valid number token?
+   */
   private boolean valid = false;
   /**
    * <p>Any unicode identifier start is valid.
@@ -76,7 +81,7 @@ public class JSONTokenDescriptorNumberImpl implements JSONTokenDescriptor
   @Override
   public JSONTokenDesignation getDesignation()
   {
-    return JSONTokenDesignation.ID_NUM;
+    return (stage == 0) ? JSONTokenDesignation.ID_NUM_INT : JSONTokenDesignation.ID_NUM_REA;
   }
   /**
    * <p>The token continues as long as the characters are valid identifier chars.
@@ -147,4 +152,15 @@ public class JSONTokenDescriptorNumberImpl implements JSONTokenDescriptor
   {
     return getType().name();
   }
+  
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void init()
+  {
+    //Set stage and validity flag to initial state.
+    stage = 0;
+    valid = false;
+  }  
 }

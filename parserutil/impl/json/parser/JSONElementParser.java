@@ -36,6 +36,7 @@ import java.util.ResourceBundle;
 import parserutil.main.GeneralParser;
 import parserutil.main.GeneralParserException;
 import parserutil.main.GeneralParserToken;
+import parserutil.main.TokenLocation;
 
 /**
  * <p>
@@ -71,7 +72,7 @@ public class JSONElementParser extends JSONAbstractParser
     try
     {
       //Initialise the parser.
-      initParser();
+      init();
       
       // Get the first non-comment token.
       GeneralParserToken<JSONTokenDescriptor> nextToken;
@@ -80,8 +81,8 @@ public class JSONElementParser extends JSONAbstractParser
       while( (nextToken = getNextJSONToken(content)) != null)
       {
         // Check status.
-        if (!"".equals(nextToken.machineStatus))
-          throw new GeneralParserException(nextToken.machineStatus, nextToken.getLocation());
+//        if (!"".equals(nextToken.machineStatus))
+//          throw new GeneralParserException(nextToken.machineStatus, nextToken.getLocation());
 
         //Call the receiver.
         receiver.receiveJSONValue(nextToken);
@@ -91,6 +92,5 @@ public class JSONElementParser extends JSONAbstractParser
     {
       throw new GeneralParserException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("general"), null, npe);
     }
-  }
-  
+  }  
 }

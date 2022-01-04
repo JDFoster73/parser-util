@@ -67,7 +67,8 @@ public class JSONDocumentParser extends JSONAbstractParser
     try
     {
       //Initialise the parser.
-      initParser();
+      //initParser();
+      init();
       
       // Parse the content.
 //      parser.init(new JSONParseStateMachine<>());
@@ -79,8 +80,8 @@ public class JSONDocumentParser extends JSONAbstractParser
       if (nextToken != null)
       {
         // Check status.
-        if (!"".equals(nextToken.machineStatus))
-          throw new GeneralParserException(nextToken.machineStatus, nextToken.getLocation());
+//        if (!"".equals(nextToken.machineStatus))
+//          throw new GeneralParserException(nextToken.machineStatus, nextToken.getLocation());
         
         // Check type. Top level type can be an object, array or a string.
         if (nextToken.descriptor.getDesignation() == JSONTokenDesignation.OP_START_OBJ)

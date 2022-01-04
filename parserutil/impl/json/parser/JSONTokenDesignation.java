@@ -46,7 +46,8 @@ public enum JSONTokenDesignation
   OP_FLDASG,    //Field name:value assignment operator :
   ID_VAR,       //Standard variable.
   ID_STR,       //Standard string
-  ID_NUM,       //Standard number
+  ID_NUM_INT,   //Standard integer number
+  ID_NUM_REA,   //Standard real number
   ID_BOOL,      //Standard bool (true|false)
   ID_NULL,      //Standard null ('null')
 }

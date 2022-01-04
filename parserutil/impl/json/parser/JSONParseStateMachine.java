@@ -32,7 +32,9 @@ package parserutil.impl.json.parser;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import parserutil.main.GeneralParserException;
 import parserutil.main.GeneralParserStateMachine;
+import parserutil.main.GeneralParserStateMachineException;
 
 /**
  * <p>This provides state checking of JSON input.  It makes sure that each token is valid following the
@@ -71,18 +73,29 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
   }
   
   /**
-   * <p>Check the token.  A non-"" return value indicates an error.
+   * <p>Check the token.  If the state machine detects an error with the input state then it will throw a {@link GeneralParserException}.
+   * @throws GeneralParserException 
    */
-  public String check(JSONTokenDescriptor desc)
+  public void check(JSONTokenDescriptor desc) throws GeneralParserStateMachineException
   {
     //Check the input is not null.
     if(desc == null) throw new NullPointerException();
     
     //Comment - don't check, don't move state.
-    if(desc.getType() == JSONTokenType.COMMENT) return "";
+    if(desc.getType() == JSONTokenType.COMMENT) return;
 
     //The currently processed JSON instance checker is the last entry in the nesting list. 
-    return nestingList.get(nestingList.size() - 1).check(desc);
+    nestingList.get(nestingList.size() - 1).check(desc);
+  }
+
+  /**
+   * <p>Initialise the state of the state machine.
+   */
+  @Override
+  public void initialise()
+  {
+    //
+    reset();
   }
 
   /**
@@ -127,26 +140,32 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
   {
     
     @Override
-    public String check(JSONTokenDescriptor desc)
+    public void check(JSONTokenDescriptor desc) throws GeneralParserStateMachineException
     {
       //Field type decision.
       if(desc.getDesignation() == JSONTokenDesignation.OP_START_OBJ)
       {
         nestingList.add(new ObjectValidator());
-        return "";
+        return;
       }
       else if(desc.getDesignation() == JSONTokenDesignation.OP_START_ARR)
       {
         nestingList.add(new ArrayValidator());
-        return "";
+        return;
       }
       else if(desc.getType() == JSONTokenType.IDENTIFIER)
       {
         nestingList.add(new ValueValidator());
-        return "";
+        return;
       }
       //None of the required tokens found.
-      return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("nostartok");
+      throw new GeneralParserStateMachineException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("nostartok"));
+    }
+
+    @Override
+    public void initialise()
+    {
+      //No need to initialise this instance.  The main parser instance will discard it if it is reset.      
     }
     
   }
@@ -164,9 +183,10 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
     
     /**
      * <p>Check the next token against the current parsing state.  Only certain tokens are allowed to follow other tokens in a JSON object.
+     * @throws GeneralParserStateMachineException 
      */
     @Override
-    public String check(JSONTokenDescriptor tokenDescriptor)
+    public void check(JSONTokenDescriptor tokenDescriptor) throws GeneralParserStateMachineException
     {
       switch(state)
       {
@@ -178,66 +198,72 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
           {
             //Finished object def.  Complete this section.
             completeSection();
-            return "";
+            return;
           }
           //Not the end of object and not a string.  Object fields must start with a string identifier.
-          if(tokenDescriptor.getDesignation() != JSONTokenDesignation.ID_STR) return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objfldnostr");
+          if(tokenDescriptor.getDesignation() != JSONTokenDesignation.ID_STR) throw new GeneralParserStateMachineException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objfldnostr"));
           //Still here - we now need the field assignment character ':'.
           state = STATE.FIELD_ASG;
           //Success.
-          return "";
+          return;
         case FIELD_ASG:
           //Separator needed.  After this we need to get a value.
-          if(tokenDescriptor.getDesignation() != JSONTokenDesignation.OP_FLDASG) return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objfldnosep");
+          if(tokenDescriptor.getDesignation() != JSONTokenDesignation.OP_FLDASG) throw new GeneralParserStateMachineException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objfldnosep"));
           //Success.  Got the field name and separator, now get the field value.
           state = STATE.FIELD_DES;
-          return "";
+          return;
         case FIELD_DES:
           //We're looking for an OBJECT, ARRAY OR VALUE.
           if(tokenDescriptor.getDesignation() == JSONTokenDesignation.OP_START_OBJ)
           {
             state = STATE.FIELD_SEP;             //We're looking for field separator (or end) when nested validator completes.
             addSection(new ObjectValidator());
-            return "";
+            return;
           }
           else if(tokenDescriptor.getDesignation() == JSONTokenDesignation.OP_START_ARR)
           {
             state = STATE.FIELD_SEP;             //We're looking for field separator (or end) when nested validator completes.
             addSection(new ArrayValidator());
-            return "";
+            return;
           }
           else if(tokenDescriptor.getType() == JSONTokenType.IDENTIFIER)
           {
             state = STATE.FIELD_SEP;    //Looking for a simple value.
-            return "";
+            return;
           }
           //None of the required tokens found.
-          return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objnoval");          
+          throw new GeneralParserStateMachineException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objnoval"));          
         case FIELD_SEP:
           //We're looking for separator or end.
           if(tokenDescriptor.getDesignation() == JSONTokenDesignation.OP_SEP)
           {
             //Expecting another field.
             state = STATE.FIELD_NAME;
-            return "";
+            return;
           }
           else if(tokenDescriptor.getDesignation() == JSONTokenDesignation.OP_FINISH_OBJ)
           {
             //Finished object def.  Complete this section.
             completeSection();
-            return "";
+            return;
           }
           else
           {
             //Expected - separator or end.
-            return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objfol");
+            throw new GeneralParserStateMachineException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("objfol"));
           }
         default:
           break;
       }
       
       //Default - illegal state. 
-      return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("badstate");
+      throw new GeneralParserStateMachineException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("badstate"));
+    }
+
+    @Override
+    public void initialise()
+    {
+      //No need to initialise this instance.  The main parser instance will discard it if it is reset.      
     }
   }
   
@@ -253,7 +279,7 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
     private STATE state = STATE.FIELD_DES;
 
     @Override
-    public String check(JSONTokenDescriptor desc)
+    public void check(JSONTokenDescriptor desc) throws GeneralParserStateMachineException
     {
       switch(state)
       {
@@ -263,51 +289,57 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
           {
             state = STATE.FIELD_SEP;             //We're looking for field separator (or end) when nested validator completes.
             addSection(new ObjectValidator());
-            return "";
+            return;
           }
           else if(desc.getDesignation() == JSONTokenDesignation.OP_START_ARR)
           {
             state = STATE.FIELD_SEP;             //We're looking for field separator (or end) when nested validator completes.
             addSection(new ArrayValidator());
-            return "";
+            return;
           }
           else if(desc.getDesignation() == JSONTokenDesignation.OP_FINISH_ARR)
           {
             //Finished array def; empty.  Complete this section.
             completeSection();
-            return "";
+            return;
           }
           else if(desc.getType() == JSONTokenType.IDENTIFIER)
           {
             state = STATE.FIELD_SEP;    //Simple value - looking for separator or end.
-            return "";
+            return;
           }
           //None of the required tokens found.   
-          return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("arrnoval");          
+          throw new GeneralParserStateMachineException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("arrnoval"));          
         case FIELD_SEP:
           //We're looking for separator or end.
           if(desc.getDesignation() == JSONTokenDesignation.OP_SEP)
           {
             //Expecting another field.
             state = STATE.FIELD_DES;
-            return "";
+            return;
           }
           else if(desc.getDesignation() == JSONTokenDesignation.OP_FINISH_ARR)
           {
             //Finished object def.  Complete this section.
             completeSection();
-            return "";
+            return;
           }
           else
           {
-            return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("arrfol");
+            throw new GeneralParserStateMachineException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("arrfol"));
           }
         default:
           break;
       }
 
       //Default - illegal state. 
-      return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("badstate");
+      throw new GeneralParserStateMachineException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("badstate"));
+    }
+
+    @Override
+    public void initialise()
+    {
+      //No need to initialise this instance.  The main parser instance will discard it if it is reset.      
     }
     
   }
@@ -321,10 +353,16 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
   private class ValueValidator implements GeneralParserStateMachine<JSONTokenDescriptor>
   {
     @Override
-    public String check(JSONTokenDescriptor t)
+    public void check(JSONTokenDescriptor t) throws GeneralParserStateMachineException
     {
       //No tokens following the string are permitted.  
-      return ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("valfol");
+      throw new GeneralParserStateMachineException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("valfol"));
+    }
+
+    @Override
+    public void initialise()
+    {
+      //No need to initialise this instance.  The main parser instance will discard it if it is reset.      
     }
     
   }
