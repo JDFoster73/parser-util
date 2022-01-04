@@ -30,28 +30,28 @@
 package parserutil.main;
 
 /**
- * <p>Users of this library will implement a state machine that has this interface.
- * The state machine validates the tokens parsed, and ensures that the input
- * is correct.
+ * <p>General parser state machine exception.  
  * 
  * @author James David Foster jdfoster73@gmail.com
  *
  */
-public interface GeneralParserStateMachine<T extends TokenDescriptor>
+@SuppressWarnings("serial")
+public class GeneralParserStateMachineException extends Exception
 {
   /**
-   * <p>The general parser run state machine checks on completed tokens by passing them through
-   * an implementation-supplied state machine which checks that the tokens are correctly placed.
+   * <p>Create a parser implementation exception with the implementation's fail code.
    * 
-   * @param t the token to check
-   * @param loc the location of the token in the input.
-   * @return implementation-dependent fault description.  "" ALWAYS equals success.
+   * @param failCode
+   * @param location
+   * @param inf the fail message.
    */
-  public void check(T t) throws GeneralParserStateMachineException;
-  
-  /**
-   * <p>Initialise the state machine to its starting position.
-   */
-  public void initialise();
-  
+  public GeneralParserStateMachineException(String inf) 
+  {
+    super(inf);
+  }
+    
+  public GeneralParserStateMachineException(String inf, Throwable cause)
+  {
+    super(inf, cause);
+  }
 }

@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 /**
  * <p>General parser.  This takes the rules given it in the constructor and parses a stream of characters.  Every new token
@@ -42,7 +41,7 @@ import java.util.ResourceBundle;
  * @author James David Foster jdfoster73@gmail.com
  *
  */
-public class GeneralParser<T extends TokenDescriptor>
+public abstract class GeneralParser<T extends TokenDescriptor>
 {
   /**
    * <p>These token descriptors are set by the owning class.  They are the way that the general parser
@@ -100,7 +99,7 @@ public class GeneralParser<T extends TokenDescriptor>
   /**
    * <p>The token validation machine.
    */
-  private GeneralParserStateMachine<T> validationMachine;
+  private final GeneralParserStateMachine<T> validationMachine;
   
   /**
    * <p>Create the general parser with the token types and listener provided.  The token types are used to render
@@ -109,9 +108,12 @@ public class GeneralParser<T extends TokenDescriptor>
    * @param tokenTypes
    * @param listener
    */
-  public GeneralParser(List<T> tokenTypes)
+  public GeneralParser(List<T> tokenTypes, GeneralParserStateMachine<T> validationMachine)
   {
     for(T t : tokenTypes) configuredParserTokenList.add(t);
+    
+    //Set validation machine.
+    this.validationMachine = validationMachine;
   }
   
   /**
@@ -121,7 +123,7 @@ public class GeneralParser<T extends TokenDescriptor>
    * @throws IOException
    * @throws GeneralParserException
    */
-  public void init(GeneralParserStateMachine<T> validationMachine)
+  protected void init()
   {
     //Set the line and column numbers.  Start on line 0 but column is -1.  We want it to be 0 when the first char is read.
     line = 0;
@@ -130,8 +132,14 @@ public class GeneralParser<T extends TokenDescriptor>
     //Set the current char to 0.
     currentChar = 0;
     
-    //Set validation machine.
-    this.validationMachine = validationMachine;
+    //Initialise the state machine.
+    validationMachine.initialise();
+    
+    //Initialise all parser tokens.  Reset any state they contain to initial.
+    for(T t : configuredParserTokenList)
+    {
+      t.init();
+    }
   }
 
   /**
@@ -229,11 +237,18 @@ public class GeneralParser<T extends TokenDescriptor>
     }
         
     //Got a token - check and return it.
-    String stat = validationMachine.check(current);
-    //Throw exception if state machine check failed.
-    if(!"".equals(stat)) throw new GeneralParserException(stat, new TokenLocation(startLine, startColumn, prevLine, prevColumn));
+    try
+    {
+      validationMachine.check(current);
+    }
+    catch (GeneralParserStateMachineException e)
+    {
+      //Throw exception if state machine check failed.
+      throw new GeneralParserException(e.getMessage(), new TokenLocation(startLine, startColumn, prevLine, prevColumn));
+    }
+
     //OK - return the token.
-    return new GeneralParserToken<>(current, currentTokenBuilder.toString(), startLine, startColumn, prevLine, prevColumn, "");
+    return new GeneralParserToken<>(current, currentTokenBuilder.toString(), startLine, startColumn, prevLine, prevColumn);
   }
 
   /**
@@ -253,7 +268,8 @@ public class GeneralParser<T extends TokenDescriptor>
     //We need at least one candidate.
     if(parserTokenProcessingList.size() == 0) 
     {
-      throw new GeneralParserException(ResourceBundle.getBundle("parserutil.main.strings").getString("0001"), new TokenLocation(line, column, line, column));
+      //throw new GeneralParserException(ResourceBundle.getBundle("parserutil.main.strings").getString("0001"), new TokenLocation(line, column, line, column));
+      handleNoProcessingToken(new TokenLocation(line, column, line, column));
     }
     
     //Start the next token in the string builder.
@@ -295,4 +311,14 @@ public class GeneralParser<T extends TokenDescriptor>
     //Return the read character.
     return ret;
   }
+  
+  /**
+   * <p>Call the parser implementation to deal with a no processing token condition.  This is where the input token can't be matched
+   * to one of the processing tokens that the parser implementation has provided.  This essentially means that the parser can't tell
+   * what type of token it is as the input is not valid.
+   * 
+   * @param location
+   * @throws GeneralParserException 
+   */
+  protected abstract void handleNoProcessingToken(TokenLocation location) throws GeneralParserException;
 }

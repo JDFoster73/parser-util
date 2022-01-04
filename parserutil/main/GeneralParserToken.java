@@ -71,7 +71,7 @@ public class GeneralParserToken<T extends TokenDescriptor>
   /**
    * <p>Status from the state machine.
    */
-  public String machineStatus;
+  //public String machineStatus;
   
   /**
    * <p>Construct the token.
@@ -79,7 +79,7 @@ public class GeneralParserToken<T extends TokenDescriptor>
    * @param descriptor
    * @param tokenValue
    */
-  public GeneralParserToken(T descriptor, String tokenValue, int lineStart, int columnStart, int lineEnd, int columnEnd, String machineStatus)
+  public GeneralParserToken(T descriptor, String tokenValue, int lineStart, int columnStart, int lineEnd, int columnEnd)//, String machineStatus)
   {
     this.descriptor = descriptor;
     this.tokenValue = tokenValue;
@@ -87,7 +87,7 @@ public class GeneralParserToken<T extends TokenDescriptor>
     this.columnStart = columnStart;
     this.lineEnd = lineEnd;
     this.columnEnd = columnEnd;
-    this.machineStatus = machineStatus;
+    //this.machineStatus = machineStatus;
   }
 
   /**

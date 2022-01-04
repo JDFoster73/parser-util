@@ -41,4 +41,6 @@ public interface TokenDescriptor
   public boolean isTokenStartChar(char ch);
   
   public boolean isTokenContentChar(char ch);
+
+  public void init();
 }
