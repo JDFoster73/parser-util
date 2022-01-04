@@ -52,7 +52,8 @@ public class JSONValueImpl implements JSONValue
   public enum VALTYPE
   {
     STR,
-    NUM,
+    NUM_INT,
+    NUM_REA,
     BOOL,
     NULL
   }
@@ -86,8 +87,11 @@ public class JSONValueImpl implements JSONValue
       case ID_BOOL:
         this.type = VALTYPE.BOOL;
         break;
-      case ID_NUM:
-        this.type = VALTYPE.NUM;
+      case ID_NUM_INT:
+        this.type = VALTYPE.NUM_INT;
+        break;
+      case ID_NUM_REA:
+        this.type = VALTYPE.NUM_REA;
         break;
       case ID_STR:
         this.type = VALTYPE.STR;
@@ -129,6 +133,20 @@ public class JSONValueImpl implements JSONValue
 
     //Just return the value otherwise.
     return fieldValue;
+  }
+  
+  /**
+   * <p>The type of value MUST be NUM_INT or this operation will fail.
+   * 
+   * @return
+   */
+  public int getIntegerValue()
+  {
+    //Must be integer.
+    if(type != VALTYPE.NUM_INT) throw new IllegalStateException();
+    
+    //Parse and return.
+    return Integer.parseInt(fieldValue);
   }
   
   /**

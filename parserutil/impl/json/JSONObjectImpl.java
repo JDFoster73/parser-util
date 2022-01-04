@@ -86,7 +86,7 @@ public class JSONObjectImpl implements JSONValue
       JSONField jsonField = fieldList.get(i);
       
       //Copy it.
-      copy.addField(new JSONField(jsonField.getFieldName(), jsonField.getFieldValue().copy()));
+      copy.addField(new JSONField(jsonField.getFieldName(), jsonField.copy()));//.getFieldValue()
     }
     
     //Return.

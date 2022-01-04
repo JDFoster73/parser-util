@@ -87,15 +87,56 @@ public class JSONField
   }
   
   /**
-   * <p>
-   * Get the field value.
-   * 
+   * <p>Get JSON value.  The underlying {@link JSONValue} contained MUST return
+   * {@link JSONInstanceType#VALUE} when its {@link JSONValue#getType()} method is called.
+   *  
    * @return
    */
-  public JSONValueHolder getFieldValue()
+  public JSONValueImpl getValueType()
   {
-    return val;
+    return val.getValueType();
   }
+
+  /**
+   * <p>Get JSON object.  The underlying {@link JSONValue} contained MUST return
+   * {@link JSONInstanceType#OBJECT} when its {@link JSONValue#getType()} method is called.
+   *  
+   * @return
+   */
+  public JSONObjectImpl getObjectType()
+  {
+    return val.getObjectType();
+  }
+
+  /**
+   * <p>Get JSON array.  The underlying {@link JSONValue} contained MUST return
+   * {@link JSONInstanceType#ARRAY} when its {@link JSONValue#getType()} method is called.
+   *  
+   * @return
+   */
+  public JSONArrayImpl getArrayType()
+  {
+    return val.getArrayType();
+  }
+
+  /**
+   * <p>Perform a deep copy of the object.
+   */
+  public JSONValueHolder copy()
+  {
+    return new JSONValueHolder(val.copy());
+  }
+
+//  /**
+//   * <p>
+//   * Get the field value.
+//   * 
+//   * @return
+//   */
+//  public JSONValueHolder getFieldValue()
+//  {
+//    return val;
+//  }
   
   /**
    * <p>
