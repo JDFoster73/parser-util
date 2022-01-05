@@ -181,8 +181,8 @@ public class JSONDocumentFunctionTests
     JSONObjectImpl objectType = arrayType.getField(5).getObjectType();
     JSONField field = objectType.getField(0);
     assertTrue(field.getFieldName().equals("field1"));
-    assertTrue(field.getFieldValue().getValueType().getValue().equals("133234.132"));
-    assertTrue(field.getFieldValue().getValueType().getValueType() == VALTYPE.NUM);
+    assertTrue(field.getValueType().getValue().equals("133234.132"));
+    assertTrue(field.getValueType().getValueType() == VALTYPE.NUM_REA);
   }
 
   /**
@@ -200,14 +200,14 @@ public class JSONDocumentFunctionTests
     //Make sure parser throws no errors.
     JSONValueHolder jsonVal = jp.parse(new StringReader(tststr));
     JSONObjectImpl objectType = jsonVal.getObjectType();
-    assertTrue(objectType.getField(0).getFieldValue().getValueType().getValue().equals("v1"));
-    assertTrue(objectType.getField(1).getFieldValue().getValueType().getValue().equals("-1234.3234"));
-    assertTrue(objectType.getField(2).getFieldValue().getValueType().getValue().equals("true"));
-    assertTrue(objectType.getField(3).getFieldValue().getValueType().getValue().equals("false"));
-    assertTrue(objectType.getField(4).getFieldValue().getValueType().getValue().equals("null"));
+    assertTrue(objectType.getField(0).getValueType().getValue().equals("v1"));
+    assertTrue(objectType.getField(1).getValueType().getValue().equals("-1234.3234"));
+    assertTrue(objectType.getField(2).getValueType().getValue().equals("true"));
+    assertTrue(objectType.getField(3).getValueType().getValue().equals("false"));
+    assertTrue(objectType.getField(4).getValueType().getValue().equals("null"));
     
     //Object.
-    JSONArrayImpl arrayType = objectType.getField(5).getFieldValue().getArrayType();
+    JSONArrayImpl arrayType = objectType.getField(5).getArrayType();
     assertTrue(arrayType.getField(0).getValueType().getValue().equals("1234"));
     assertTrue(arrayType.getField(1).getValueType().getValue().equals("true"));
   }

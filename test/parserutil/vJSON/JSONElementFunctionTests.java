@@ -71,7 +71,7 @@ public class JSONElementFunctionTests
     desList.add(JSONTokenDesignation.OP_SEP);
     desList.add(JSONTokenDesignation.ID_STR);
     desList.add(JSONTokenDesignation.OP_FLDASG);
-    desList.add(JSONTokenDesignation.ID_NUM);
+    desList.add(JSONTokenDesignation.ID_NUM_REA);
     desList.add(JSONTokenDesignation.OP_SEP);
     desList.add(JSONTokenDesignation.ID_STR);
     desList.add(JSONTokenDesignation.OP_FLDASG);
@@ -90,7 +90,7 @@ public class JSONElementFunctionTests
     desList.add(JSONTokenDesignation.ID_STR);
     desList.add(JSONTokenDesignation.OP_FLDASG);
     desList.add(JSONTokenDesignation.OP_START_ARR);
-    desList.add(JSONTokenDesignation.ID_NUM);
+    desList.add(JSONTokenDesignation.ID_NUM_INT);
     desList.add(JSONTokenDesignation.OP_SEP);
     desList.add(JSONTokenDesignation.ID_BOOL);
     desList.add(JSONTokenDesignation.OP_FINISH_ARR);
