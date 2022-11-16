@@ -96,7 +96,7 @@ public class JSONValueImpl implements JSONValue
       case ID_STR:
         this.type = VALTYPE.STR;
         break;
-        default:
+       default:
           throw new IllegalArgumentException();
     }
   }

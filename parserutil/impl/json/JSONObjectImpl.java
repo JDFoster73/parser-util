@@ -86,7 +86,7 @@ public class JSONObjectImpl implements JSONValue
       JSONField jsonField = fieldList.get(i);
       
       //Copy it.
-      copy.addField(new JSONField(jsonField.getFieldName(), jsonField.copy()));//.getFieldValue()
+      copy.addField(new JSONField(jsonField.getFieldName(), jsonField.copy()));
     }
     
     //Return.
@@ -146,6 +146,48 @@ public class JSONObjectImpl implements JSONValue
     throw new IllegalArgumentException(string);
   }
   
+  /**
+   * <p>Get the requested field by name.  This returns a null reference if the field doesn't exist.
+   * 
+   * @param string
+   * @return
+   */
+  public JSONField peekField(String string)
+  {
+    //Find the field.
+    for(int i = 0; i < fieldList.size(); i++)
+    {
+      JSONField retFld;
+      if( (retFld = fieldList.get(i)).getFieldName().equals(string)) return retFld;
+    }
+    
+    return null;
+  }
+
+  /**
+   * <p>Remove the requested field by name.  This throws a runtime exception if the field doesn't exist.
+   * 
+   * @param string
+   * @return
+   */
+  public void removeField(String string)
+  {
+    //Find the field.
+    for(int i = 0; i < fieldList.size(); i++)
+    {
+      if( fieldList.get(i).getFieldName().equals(string))
+      {
+        //Remove at this index.
+        fieldList.remove(i);
+        //Finished - return.
+        return;
+      }
+    }
+    
+    //Still here - field doesn't exist, which should raise a runtime exception.
+    throw new IllegalArgumentException(string);
+  }
+
   /**
    * <p>Get the field for the given index.
    * 

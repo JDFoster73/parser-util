@@ -99,8 +99,10 @@ public class JSONElementFunctionTests
 
     //Value should be a single string.
     jp.parse(new StringReader(tststr), (e) -> {
-      JSONTokenDesignation remove = desList.remove(0);
       JSONTokenDesignation designation = e.descriptor.getDesignation();
+      //Ignore whitespace.
+      if(designation == JSONTokenDesignation.WHITESPACE) return;
+      JSONTokenDesignation remove = desList.remove(0);
       assertTrue(designation.equals(remove));
     });
   }

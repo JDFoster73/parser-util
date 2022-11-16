@@ -38,6 +38,7 @@ package parserutil.impl.json.parser;
 public enum JSONTokenDesignation
 {
   COMMENT,      //Comments are ignored.
+  WHITESPACE,   //Whitespace is ignored.
   OP_START_OBJ, //Start object {
   OP_FINISH_OBJ,//Finish object }
   OP_START_ARR, //Start array [

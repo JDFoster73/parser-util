@@ -120,6 +120,16 @@ public class JSONField
   }
 
   /**
+   * <p>Get the JSON field type of the value - object, array or val.
+   * 
+   * @return the field's JSON type.
+   */
+  public JSONInstanceType getFieldType()
+  {
+    return val.getType();
+  }
+  
+  /**
    * <p>Perform a deep copy of the object.
    */
   public JSONValueHolder copy()

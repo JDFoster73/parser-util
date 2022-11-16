@@ -84,6 +84,9 @@ public class JSONParseStateMachine<T> implements GeneralParserStateMachine<JSONT
     //Comment - don't check, don't move state.
     if(desc.getType() == JSONTokenType.COMMENT) return;
 
+    //Whitespace - don't check, don't move state.
+    if(desc.getDesignation() == JSONTokenDesignation.WHITESPACE)  return;
+
     //The currently processed JSON instance checker is the last entry in the nesting list. 
     nestingList.get(nestingList.size() - 1).check(desc);
   }

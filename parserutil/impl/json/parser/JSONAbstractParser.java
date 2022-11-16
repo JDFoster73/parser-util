@@ -52,16 +52,6 @@ import parserutil.main.TokenLocation;
  */
 public abstract class JSONAbstractParser extends GeneralParser<JSONTokenDescriptor>
 {
-  /**
-   * <p>
-   * The general parser instance.
-   */
-  //private final GeneralParser<JSONTokenDescriptor> parser;
-  
-  /**
-   * <p>State machine instance.
-   */
-  //private final JSONParseStateMachine<JSONTokenDescriptor> stateMachine;
 
   /**
    * <p>Provide a list of JSON parser tokens for a given instance.  This should be thread safe as only local references
@@ -76,6 +66,7 @@ public abstract class JSONAbstractParser extends GeneralParser<JSONTokenDescript
     // Create all token descriptors used in JSON schema.
     List<JSONTokenDescriptor> cp = new ArrayList<>();
     cp.add(new JSONTokenDescriptorCommentImpl());
+    cp.add(new JSONTokenDescriptorWhitespaceImpl());
     cp.add(new JSONTokenDescriptorNumberImpl());
     cp.add(new JSONTokenDescriptorBoolImpl());
     cp.add(new JSONTokenDescriptorNullImpl());
@@ -143,14 +134,4 @@ public abstract class JSONAbstractParser extends GeneralParser<JSONTokenDescript
   {
     throw new GeneralParserException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("notok"), location);
   }
-
-//  /**
-//   * <p>Initialise the parser.
-//   */
-//  protected void initParser()
-//  {
-//    //stateMachine.reset();
-//    //init(stateMachine);
-//    init();
-//  }
 }

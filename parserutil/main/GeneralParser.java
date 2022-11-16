@@ -150,15 +150,15 @@ public abstract class GeneralParser<T extends TokenDescriptor>
    * @throws IOException
    * @throws GeneralParserException
    */
-  public GeneralParserToken<T> getNextToken(Reader content) throws IOException, GeneralParserException
+  protected GeneralParserToken<T> getNextToken(Reader content) throws IOException, GeneralParserException
   {
     //Check the end of stream hasn't already been reached.
     if(currentChar == 0xffff) return null;
     
     //Check the current char for whitespace.  We don't process WS between tokens.
-    if(currentChar == 0 || Character.isWhitespace(currentChar))
+    if(currentChar == 0)
     {
-      //Move to first non-whitespace character.
+      //Move to first non-null character.
       while(true)
       {
         //Read the next char.
@@ -168,10 +168,27 @@ public abstract class GeneralParser<T extends TokenDescriptor>
         if(currentChar == 0xFFFF) return null;
 
         //If not whitespace then break and continue processing;
-        if(!Character.isWhitespace(currentChar)) break;
+        if(currentChar != 0) break;
       }
     }
     
+//    //Check the current char for whitespace.  We don't process WS between tokens.
+//    if(currentChar == 0 || Character.isWhitespace(currentChar))
+//    {
+//      //Move to first non-whitespace character.
+//      while(true)
+//      {
+//        //Read the next char.
+//        currentChar = readNext(content);
+//        
+//        //If end of stream then 
+//        if(currentChar == 0xFFFF) return null;
+//
+//        //If not whitespace then break and continue processing;
+//        if(!Character.isWhitespace(currentChar)) break;
+//      }
+//    }
+
     //Initialise the current token type to null.
     T current = null;
         

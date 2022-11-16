@@ -1,0 +1,123 @@
+/**
+ * Copyright 2021 James David Foster jdfoster73@gmail.com
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * 1. Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * 
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * 
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+package parserutil.impl.csv.parser;
+
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import parserutil.impl.csv.CSVRowDelimiterImpl;
+import parserutil.impl.csv.CSVValueImpl;
+import parserutil.impl.textreplace.TextNormalValueImpl;
+import parserutil.impl.textreplace.TextReplaceValue;
+import parserutil.impl.textreplace.TextReplaceValueImpl;
+import parserutil.main.GeneralParser;
+import parserutil.main.GeneralParserException;
+import parserutil.main.GeneralParserToken;
+import parserutil.main.TokenLocation;
+
+/**
+ * <p>
+ * The {@link CSVParser} extends the functionality of the
+ * {@link GeneralParser} for Unit Configuration Format files. This format very simple.  It allows markup-delimited strings
+ * to be parsed into normal text and marked-up text.  The ~ char is used to start and finish a markup-delimited string.  If a ~ char
+ * is required in normal text then it should be prefixed with the \ char.
+ * 
+ * @author James David Foster jdfoster73@gmail.com
+ *
+ */
+public class CSVParser extends GeneralParser<CSVTokenDescriptor>
+{
+  /**
+   * <p>
+   * 
+   * @return
+   */
+  private static List<CSVTokenDescriptor> getParserTokenList()
+  {
+    // Create all token descriptors used in JSON schema.
+    List<CSVTokenDescriptor> cp = new ArrayList<>();
+    cp.add(new CSVTokenDescriptorValueImpl());    
+    cp.add(new CSVTokenDescriptorFieldDelimImpl());
+    cp.add(new CSVTokenDescriptorRowDelimImpl());
+    
+    return cp;
+  }
+  
+//  private final Reader content;
+//  
+//  private final Map<String, String> replacementMap;
+//
+  /**
+   * <p>
+   * Create an instance of a unit configuration file parser.
+   */
+  public CSVParser()
+  {
+    // Create the general parser instance with the lexical elements of unit config
+    // files.
+    super(getParserTokenList(), new CSVParseStateMachine<>());
+
+//    //Content.
+//    this.content = content;
+//    
+//    //Replacement map.
+//    this.replacementMap = replacementMap;
+    
+    // Initialise the parser.
+    init();
+  }
+
+  public void parse(Reader content, CSVTokenReceiver receiver) throws IOException, GeneralParserException
+  {
+    //Initialise underlying parser.
+    init();
+    
+    //Get tokens.
+    GeneralParserToken<CSVTokenDescriptor> nextToken;
+    while( (nextToken = getNextToken(content)) != null)
+    {
+      
+      receiver.receiveCSVValue(nextToken.descriptor.getValue(nextToken.tokenValue));
+    }
+  }
+
+  /**
+   * <p>Handle condition where next token is not recognised as being a particular type.
+   */
+  @Override
+  protected void handleNoProcessingToken(TokenLocation location) throws GeneralParserException
+  {
+    throw new GeneralParserException("No token element for location: ", location);
+  }
+}

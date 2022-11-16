@@ -36,7 +36,6 @@ import java.util.ResourceBundle;
 import parserutil.main.GeneralParser;
 import parserutil.main.GeneralParserException;
 import parserutil.main.GeneralParserToken;
-import parserutil.main.TokenLocation;
 
 /**
  * <p>
@@ -50,7 +49,7 @@ import parserutil.main.TokenLocation;
  */
 public class JSONElementParser extends JSONAbstractParser
 {
- 
+  
   /**
    * <p>
    * Create an instance of a unit configuration file parser.
@@ -61,7 +60,7 @@ public class JSONElementParser extends JSONAbstractParser
   
   /**
    * <p>
-   * Parse the given content.  Send elements to the token receiver specified.
+   * Parse the given content. Send elements to the token receiver specified.
    * 
    * @param content
    * @throws IOException
@@ -71,26 +70,26 @@ public class JSONElementParser extends JSONAbstractParser
   {
     try
     {
-      //Initialise the parser.
+      // Initialise the parser.
       init();
       
       // Get the first non-comment token.
       GeneralParserToken<JSONTokenDescriptor> nextToken;
       
       // Check the next token. Null implies the end of stream.
-      while( (nextToken = getNextJSONToken(content)) != null)
+      while ((nextToken = getNextJSONToken(content)) != null)
       {
         // Check status.
 //        if (!"".equals(nextToken.machineStatus))
 //          throw new GeneralParserException(nextToken.machineStatus, nextToken.getLocation());
-
-        //Call the receiver.
-        receiver.receiveJSONValue(nextToken);
+        
+        // Call the receiver.  DO NOT process whitespace.
+        if(nextToken.descriptor.getDesignation() != JSONTokenDesignation.WHITESPACE) receiver.receiveJSONValue(nextToken);
       }
     }
     catch (NullPointerException npe)
     {
       throw new GeneralParserException(ResourceBundle.getBundle("parserutil.impl.json.parser.strings").getString("general"), null, npe);
     }
-  }  
+  }
 }

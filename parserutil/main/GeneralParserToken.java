@@ -29,6 +29,8 @@
  */
 package parserutil.main;
 
+import parserutil.impl.csv.CSVValue;
+
 /**
  * <p>A token, which contains the token descriptor given to the {@link GeneralParser} by the owning implementation
  * and the token value in string form.
@@ -107,4 +109,5 @@ public class GeneralParserToken<T extends TokenDescriptor>
   {
     return new TokenLocation(lineStart, columnStart, lineEnd, columnEnd);
   }
+
 }
