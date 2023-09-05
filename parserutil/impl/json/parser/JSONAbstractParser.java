@@ -116,7 +116,8 @@ public abstract class JSONAbstractParser extends GeneralParser<JSONTokenDescript
       // Ignore comments.
       // Ignore comments.
       // Check it's not a comment.
-      if (nextToken.descriptor.getDesignation() != JSONTokenDesignation.COMMENT)
+      JSONTokenDesignation designation = nextToken.descriptor.getDesignation();
+      if ( (designation != JSONTokenDesignation.COMMENT) && ((designation != JSONTokenDesignation.WHITESPACE)) )
       {
         break;
       }

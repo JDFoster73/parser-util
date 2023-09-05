@@ -189,6 +189,16 @@ public class JSONObjectImpl implements JSONValue
   }
 
   /**
+   * <p>Get the number of subfields (objects, arrays or values) contained by this object.
+   * 
+   * @return
+   */
+  public int getNumberOfFields()
+  {
+    return fieldList.size();
+  }
+  
+  /**
    * <p>Get the field for the given index.
    * 
    * @param ix
